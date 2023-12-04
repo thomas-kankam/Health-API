@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('alias')->nullable();
             $table->string('middle_name')->nullable()->default(null);
             $table->string('role')->default('doctor');
             $table->string('email')->unique();
-            $table->boolean("agree");
             $table->string('password');
             $table->string("gender")->nullable();
             $table->string('phone_number')->nullable()->default(null);
@@ -27,15 +25,15 @@ return new class extends Migration
             $table->string('hospital_name')->nullable()->default(null);
             $table->string('national_id')->nullable()->default(null);
             $table->string('country')->nullable()->default(null);
-            $table->string('national_id_front_image')->nullable()->default(null);
-            $table->string('national_id_back_image')->nullable()->default(null);
-            $table->string('passport_picture')->nullable()->default(null);
+            $table->binary('national_id_front_image')->nullable(); // Add this line for image storage
+            $table->binary('national_id_back_image')->nullable();
+            $table->brinary('passport_picture')->nullable();
             $table->string('specialty')->nullable()->default(null);
-            $table->string('working_hours')->nullable()->default(null);
+            $table->json('working_hours')->nullable()->default(null);
             $table->string('appointment_type')->nullable()->default(null);
             $table->string('appointment_duration')->nullable()->default(null);
             $table->string('consultation_fee')->nullable()->default(null);
-            $table->string('data_range')->nullable()->default(null);
+            $table->date('date_range')->nullable()->default(null);
             $table->string('no_show_fee')->nullable()->default(null);
             $table->timestamp("phone_verified_at")->nullable();
             $table->timestamp('email_verified_at')->nullable();

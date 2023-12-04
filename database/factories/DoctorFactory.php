@@ -24,7 +24,6 @@ class DoctorFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'middle_name' => $this->faker->firstName(),
             'role' => $this->faker->randomElement(['doctor', 'patient']), // Randomly select 'doctor' or 'patient'
-            'agree' => $this->faker->boolean(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // Hash the password
@@ -37,14 +36,13 @@ class DoctorFactory extends Factory
             'national_id_back_image' => $this->faker->imageUrl(),
             'passport_picture' => $this->faker->imageUrl(),
             'specialty' => $this->faker->jobTitle(),
-            'working_hours' => $this->faker->randomNumber(),
+            'working_hours' => json_encode(['Monday' => '9 AM - 5 PM', 'Tuesday' => '10 AM - 6 PM']),
             'appointment_type' => $this->faker->randomNumber(),
             'appointment_duration' => $this->faker->randomNumber(),
             'consultation_fee' => $this->faker->randomNumber(),
-            'data_range' => $this->faker->randomNumber(),
+            'date_range' => $this->faker->dateTime()->format('Y-m-d'),
             'no_show_fee' => $this->faker->randomNumber(),
             'remember_token' => Str::random(10),
-            'alias' => $this->faker->name(),
             'gender' => $this->faker->randomElement(['male', 'female']), // Randomly select 'male' or 'female'
             'phone_verified_at' => now(),
         ];

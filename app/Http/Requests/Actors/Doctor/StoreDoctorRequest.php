@@ -23,26 +23,28 @@ class StoreDoctorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:doctors',
-            'phone_number' => 'required|numeric|unique:doctors,phone_number',
-            'password' => ['required', Password::defaults(), 'confirmed'],
-            'agree' => ['required', 'numeric'],
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'hospital_name' => 'required|string',
+            'national_id' => 'required|string',
+            'phone_number' => 'required|numeric|exists:doctors,phone_number',
+            'national_id_front_image' => 'required|string',
+            'national_id_back_image' => 'required|string',
+            'passport_picture' => 'required|string',
         ];
     }
 
     public function messages()
     {
         return [
-            "first_name.required" => "Your first name is required",
-            "last_name.required" => "Your last name is required",
-            "email.required" => "Your Email is required",
+            "first_name" => "Your first name is required",
+            "last_name" => "Your last name is required",
+            "hospital_name" => "Yourhospital name is required",
+            "national_id" => "Your National ID is required",
             "phone_number.required" => "Your phone number is required",
-            "password.required" => "Your password is required",
-            "password.confirmed" => "Your password does not match",
-            "email.unique:users" => "The email is already taken",
-            "agree" => "You need to accept the agreement policy"
+            "national_id_front_image" => "Your National ID front is required",
+            "national_id_back_image" => "Your National ID back is required",
+            "passport_picture" => "Your passport picture is required"
         ];
     }
 }

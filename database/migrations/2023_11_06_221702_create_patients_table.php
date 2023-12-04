@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('middle_name')->nullable()->default(null);
             $table->string('role')->default('patient');
-            $table->boolean("agree");
             $table->string("gender")->nullable();
             $table->string('email')->unique();
             $table->string('password');
@@ -25,9 +24,9 @@ return new class extends Migration
             $table->string('bio_info')->nullable()->default(null);
             $table->string('national_id')->nullable()->default(null);
             $table->string('country')->nullable()->default(null);
-            $table->string('national_id_front_image')->nullable()->default(null);
-            $table->string('national_id_back_image')->nullable()->default(null);
-            $table->string('passport_picture')->nullable()->default(null);
+            $table->binary('national_id_front_image')->nullable();
+            $table->binary('national_id_back_image')->nullable();
+            $table->binary('passport_picture')->nullable();
             $table->string('occupation')->nullable()->default(null);
             $table->timestamp("phone_verified_at")->nullable();
             $table->timestamp('email_verified_at')->nullable();
@@ -36,7 +35,7 @@ return new class extends Migration
         });
     }
 
-    /**
+    /**     
      * Reverse the migrations.
      */
     public function down(): void

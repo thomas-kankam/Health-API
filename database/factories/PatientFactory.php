@@ -22,7 +22,7 @@ class PatientFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'middle_name' => $this->faker->firstName(),
             'role' => 'patient',
-            'agree' => $this->faker->boolean(),
+            'gender' => $this->faker->randomElement(['male', 'female']), // Randomly select 'male' or 'female'
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'),

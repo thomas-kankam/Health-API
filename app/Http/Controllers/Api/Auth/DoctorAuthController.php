@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use App\Http\Requests\Actors\Doctor\LoginDoctorRequest;
 use App\Http\Requests\Actors\Doctor\StoreDoctorRequest;
@@ -18,17 +19,22 @@ class DoctorAuthController extends Controller
     {
         $data = $request->validated();
 
-        // Concatenate the parameters and generate a random string
-        $alias = Str::slug($data['first_name'] . $data['last_name'] . $data['email'] . $data['phone_number'] . Str::random(5));
+        // Handle image upload
+        if (request()->hasFile('profile_image')) {
+            $imagePath = request('profile_image')->store('profile_images', 'public');
+            $data['profile_image'] = $imagePath;
+        }
 
         $doctor = Doctor::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
-            'email' => $data['email'],
+            'hospital_name' => $data['hospital_name'],
+            'national_id' => $data['national_id'],
             'phone_number' => $data['phone_number'],
-            'password' => Hash::make($data['password']),
-            'agree' => $data['agree'],
-            'alias' => $alias,
+            'national_id_front_image' => $data['national_id_front_image'],
+            'national_id_back_image' => $data['national_id_back_image'],
+            'passport_picture' => $data['passport_picture'],
+            'profile_image' => $data['profile_image'] ?? null, // Make sure to include the profile_image field
         ]);
 
         $token = $doctor->createToken('Api token for ' . $doctor->first_name . ' ' . $doctor->last_name)->plainTextToken;
@@ -56,27 +62,52 @@ class DoctorAuthController extends Controller
             'message' => 'Login successful',
             'token' => $token,
             'data' => $doctor,
+            'status' => 200
         ]);
     }
 
-    // public function logout(Request $request)
-    // {
-    //     $doctor = $request->user(); // Get the currently authenticated user
-
-    //     if ($doctor) {
-    //         $doctor->tokens()->delete(); // Revoke all of the user's tokens
-    //     }
-
-    //     return response()->noContent();
-    // }
-
     public function logout(Request $request)
     {
-
         // Revoke the token that was used to authenticate the current request
         $request->user()->currentAccessToken()->delete();
 
         // $request->user->tokens()->delete(); // use this to revoke all tokens (logout from all devices)
-        return response()->json(['message' => 'You have successfully been logged out and your token has been deleted', 'data' => '', 'status' => 'Request successful']);
+        return response()->json(['message' => 'You have successfully been logged out and your token has been deleted', 'status' => 504]);
+    }
+
+    public function storeReset(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|string|confirmed|min:8',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60)
+                ])->save();
+            }
+        );
+
+        return $status == Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
     }
 }

@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Actors\Doctor;
+namespace App\Http\Requests\Actors\Patient;
 
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginDoctorRequest extends FormRequest
+class LoginPatientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -18,12 +19,12 @@ class LoginDoctorRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
         return [
-            'email' => 'required|email|unique:doctors',
+            'phone_number' => 'required|numeric|exists:patients,phone_number',
             'password' => 'required|string',
         ];
     }
@@ -31,7 +32,7 @@ class LoginDoctorRequest extends FormRequest
     public function messages()
     {
         return [
-            "email.required" => "Your email is required",
+            "phone_number.required" => "Your phone number is required",
             "password.required" => "Your password is required",
         ];
     }

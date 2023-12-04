@@ -30,7 +30,7 @@ class StorePatientRequest extends FormRequest
             'national_id' => 'required|string',
             'phone_number' => 'required|string',
             'password' => 'required|string|',
-            'email' => 'required|string|email|unique:users',
+            'email' => 'required|string|email|unique:patient',
             'national_id_front_image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'national_id_back_image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'passport_picture' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',

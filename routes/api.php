@@ -1,8 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Request;
-use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\DoctorAuthController;
 use App\Http\Controllers\Api\Auth\PatientAuthController;
 use App\Http\Controllers\Api\Actors\Doctor\DoctorController;
@@ -14,17 +13,20 @@ use App\Http\Controllers\Api\Actors\Patient\PatientController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
 |
 */
 
-// Route::prefix('auth')->group(function () {
 // Doctor routes (Public API routes)
 Route::prefix('auth')->group(function () {
     Route::post('doctors/register', [DoctorAuthController::class, 'register']);
     Route::post('doctors/login', [DoctorAuthController::class, 'login']);
-    Route::post('doctors/password/reset', [DoctorAuthController::class, 'resetPassword']);
+    Route::post('doctors/forgot-password', [DoctorAuthController::class, 'storeReset']);
+    Route::post('doctors/forgot-password/{token}', [DoctorAuthController::class, 'resetPassword']);
+
+    // Route::post('/forgot-password', [DoctorAuthController::class, 'store']);
+    // Route::post('/forgot-password/{token}', [DoctorAuthController::class, 'reset']);
 });
 
 

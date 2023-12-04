@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\Actors\Patient\LoginPatientRequest;
 
 class PatientAuthController extends Controller
 {
@@ -15,54 +16,51 @@ class PatientAuthController extends Controller
     {
         $data = $request->validate();
 
-        // $data['password'] = Hash::make($data['password']);
-
-        $doctor = Patient::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'email' => $data['email'],
+        $patient = Patient::create([
+            'full_name' => $data['full_name'],
             "phone" => $data["phone"],
+            'email' => $data['email'],
             "password" => Hash::make($data["password"]),
-            "agree" => $data["agree"],
-            "alias" => Str::random(30)
         ]);
 
         # Send verification email
         // event(new Registered($doctor));
 
-        $token = $doctor->createToken($data['device_name'])->plainTextToken;
+        $token = $patient->createToken('Api token for ' . $patient->first_name . ' ' . $patient->last_name)->plainTextToken;
 
-        return response()->json(['message' => 'Patient registered successfully', 'token' => $token]);
+        return response()->json(['message' => 'Doctor registered successfully', 'data' => $patient, 'token' => $token, 'status' => 200]);
     }
 
-    public function login(Request $request)
+    public function login(LoginPatientRequest $request)
     {
         // Perform user authentication, e.g., validate credentials
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'device_name' => 'required',
-        ]);
+        $request->validated();
 
         $patient = Patient::where('email', $request->email)->first();
 
         if (!$patient || !Hash::check($request->password, $patient->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
+                'password' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        return $patient->createToken($request->device_name)->plainTextToken;
+        $token = $patient->createToken('Api token for ' . $patient->first_name . ' ' . $patient->last_name)->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'data' => $patient,
+            'status' => 200
+        ]);
     }
 
     public function logout(Request $request)
     {
-        $patient = $request->user(); // Get the currently authenticated user
+        // Revoke the token that was used to authenticate the current request
+        $request->user()->currentAccessToken()->delete();
 
-        if ($patient) {
-            $patient->tokens()->delete(); // Revoke all of the user's tokens
-        }
-
-        return response()->noContent();
+        // $request->user->tokens()->delete(); // use this to revoke all tokens (logout from all devices)
+        return response()->json(['message' => 'You have successfully been logged out and your token has been deleted', 'status' => 504]);
     }
 }

@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+// use Carbon\Carbon;
 
 class Patient extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens, Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -43,15 +44,15 @@ class Patient extends Model
         'email_verified_at' => 'datetime',
     ];
 
-    protected $dates = ['transaction_date'];
+    // protected $dates = ['transaction_date'];
 
-    public function setAmountAttribute($value)
-    {
-        $this->attributes['amount'] = $value * 100;
-    }
+    // public function setAmountAttribute($value)
+    // {
+    //     $this->attributes['amount'] = $value * 100;
+    // }
 
-    public function setTransactionDateAttribute($value)
-    {
-        $this->attributes['transaction_date'] = Carbon::createFromFormat('m/d/Y', $value)->format('Y-m-d');
-    }
+    // public function setTransactionDateAttribute($value)
+    // {
+    //     $this->attributes['transaction_date'] = Carbon::createFromFormat('m/d/Y', $value)->format('Y-m-d');
+    // }
 }

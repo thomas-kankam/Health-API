@@ -16,7 +16,6 @@ class Doctor extends Authenticatable
         'last_name',
         'middle_name',
         'role',
-        'agree',
         'email',
         'password',
         'phone_number',
@@ -34,7 +33,6 @@ class Doctor extends Authenticatable
         'consultation_fee',
         'data_range',
         'no_show_fee',
-        'alias',
         'gender'
     ];
 
@@ -51,11 +49,19 @@ class Doctor extends Authenticatable
         'phone_verified_at',
     ];
 
-    // protected $casts = [
-    //     'email_verified_at' => 'datetime',
-    //     'working_hours' => 'array',
-    //     'data_range' => 'array',
-    // ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'working_hours' => 'array',
+        'data_range' => 'array',
+        // 'password' => 'string', // or remove this line if not needed
+
+        "phone_verified_at" => "datetime",
+        "login_at" => "datetime",
+        "logout_at" => "datetime",
+        "agree" => "boolean",
+        "working_hours" => "array",
+    ];
+
 
     // protected $dates = ['transaction_date'];
 
